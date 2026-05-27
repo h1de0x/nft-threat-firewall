@@ -13,6 +13,7 @@ The project is intended for Linux servers using **nftables**.
 - Filters out non-public IPv4 ranges
 - Globally merges overlapping ranges
 - Generates a ready-to-apply nftables firewall file
+- Generates a diagnostic firewall file with rate-limited logging
 - Generates a set-only nftables file for custom firewall integration
 - Publishes metadata and plain text range output
 - Updates automatically with GitHub Actions
@@ -24,6 +25,7 @@ Generated files are published in `dist/`.
 | File | Description |
 |---|---|
 | `dist/blocklist.nft` | Full nftables table with DROP rules |
+| `dist/blocklist-log.nft` | Full nftables table with DROP rules and rate-limited kernel logging |
 | `dist/blocklist-set.nft` | nftables set only, no DROP rules |
 | `dist/blocklist.txt` | Plain merged IPv4 ranges |
 | `dist/blocklist.txt.gz` | Gzip-compressed plain ranges |
@@ -35,6 +37,12 @@ Full nftables firewall:
 
 ```text
 https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist.nft
+```
+
+Logging nftables firewall:
+
+```text
+https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft
 ```
 
 Set-only nftables file:
@@ -116,6 +124,82 @@ This blocks:
 - outgoing packets to listed IPs
 - forwarded traffic from or to listed IPs
 
+## `blocklist-log.nft`
+
+`dist/blocklist-log.nft` is a diagnostic version of the full firewall file.
+
+It contains the same nftables set and DROP rules as `dist/blocklist.nft`, but also adds rate-limited kernel logging before each DROP rule.
+
+Use this version when you want to see which blocked IPs are hitting your server.
+
+Example logging rule:
+
+```nft
+ip saddr @blocked_ipv4 limit rate 10/minute log prefix "nft-threat IN " flags all
+ip saddr @blocked_ipv4 counter drop
+```
+
+The DROP rule is separate and comes after the logging rule, so packets are still dropped even when logging is rate-limited.
+
+Download:
+
+```bash
+curl -fsSL \
+  https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft \
+  -o /tmp/blocklist-log.nft
+```
+
+Validate:
+
+```bash
+sudo nft -c -f /tmp/blocklist-log.nft
+```
+
+Apply:
+
+```bash
+sudo nft delete table inet nft_threat_firewall 2>/dev/null || true
+sudo nft -f /tmp/blocklist-log.nft
+```
+
+View recent logs:
+
+```bash
+sudo journalctl -k --since "10 minutes ago" | grep nft-threat
+```
+
+Follow logs live:
+
+```bash
+sudo journalctl -kf | grep --line-buffered nft-threat
+```
+
+Show top blocked source IPs from the last hour:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep nft-threat \
+  | sed -n 's/.*SRC=\([0-9.]*\).*/\1/p' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -20
+```
+
+Show top destination ports from the last hour:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep nft-threat \
+  | grep -o 'DPT=[0-9]*' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -20
+```
+
+Use `dist/blocklist.nft` for normal quiet operation and `dist/blocklist-log.nft` for diagnostics.
+
 ## `blocklist-set.nft`
 
 `dist/blocklist-set.nft` contains only the nftables set.
@@ -172,7 +256,7 @@ Check loaded table:
 sudo nft list table inet nft_threat_firewall
 ```
 
-Check counters:
+Check counters and rule handles:
 
 ```bash
 sudo nft -a list table inet nft_threat_firewall
@@ -272,6 +356,12 @@ Run manually:
 
 ```bash
 sudo /usr/local/sbin/update-nft-threat-firewall
+```
+
+To use the logging firewall instead, change the URL in the script to:
+
+```text
+https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft
 ```
 
 ## Cron example
@@ -378,6 +468,7 @@ Validate generated nftables files:
 
 ```bash
 sudo nft -c -f dist/blocklist.nft
+sudo nft -c -f dist/blocklist-log.nft
 sudo nft -c -f dist/blocklist-set.nft
 ```
 
@@ -452,6 +543,13 @@ sudo nft delete table inet nft_threat_firewall 2>/dev/null || true
 sudo nft -f /tmp/blocklist.nft
 ```
 
+For diagnostics:
+
+```bash
+sudo nft delete table inet nft_threat_firewall 2>/dev/null || true
+sudo nft -f /tmp/blocklist-log.nft
+```
+
 For production servers:
 
 - validate before applying
@@ -470,88 +568,3 @@ See [`LICENSE`](LICENSE).
 Generated blocklist files are compiled from third-party public threat intelligence feeds. Rights, licenses, and usage restrictions for upstream feed data remain with their respective maintainers.
 
 Use this project at your own risk.
-
-## Logging firewall
-
-`dist/blocklist-log.nft` is a diagnostic version of the full firewall file.
-
-It contains the same nftables set and DROP rules as `dist/blocklist.nft`, but also adds rate-limited kernel logging before each DROP rule.
-
-Raw URL:
-
-```text
-https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft
-```
-
-Use this version when you want to see which blocked IPs are hitting your server.
-
-Download:
-
-```bash
-curl -fsSL \
-  https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft \
-  -o /tmp/blocklist-log.nft
-```
-
-Validate:
-
-```bash
-sudo nft -c -f /tmp/blocklist-log.nft
-```
-
-Apply:
-
-```bash
-sudo nft delete table inet nft_threat_firewall 2>/dev/null || true
-sudo nft -f /tmp/blocklist-log.nft
-```
-
-View logs:
-
-```bash
-sudo journalctl -k --since "10 minutes ago" | grep nft-threat
-```
-
-Follow logs live:
-
-```bash
-sudo journalctl -kf | grep --line-buffered nft-threat
-```
-
-Show top blocked source IPs from the last hour:
-
-```bash
-sudo journalctl -k --since "1 hour ago" \
-  | grep nft-threat \
-  | sed -n 's/.*SRC=\([0-9.]*\).*/\1/p' \
-  | sort \
-  | uniq -c \
-  | sort -nr \
-  | head -20
-```
-
-Show top destination ports from the last hour:
-
-```bash
-sudo journalctl -k --since "1 hour ago" \
-  | grep nft-threat \
-  | grep -o 'DPT=[0-9]*' \
-  | sort \
-  | uniq -c \
-  | sort -nr \
-  | head -20
-```
-
-### Important
-
-The logging rules use rate-limited kernel logging:
-
-```nft
-limit rate 10/minute log prefix "nft-threat IN " flags all
-```
-
-Logging is rate-limited to avoid flooding the kernel log.
-
-The DROP rule is separate and comes after the logging rule, so packets are still dropped even when logging is rate-limited.
-
-Use `dist/blocklist.nft` for normal quiet operation and `dist/blocklist-log.nft` for diagnostics.

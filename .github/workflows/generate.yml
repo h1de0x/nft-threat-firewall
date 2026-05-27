@@ -45,6 +45,7 @@ jobs:
 
           git add \
             dist/blocklist.nft \
+            dist/blocklist-log.nft \
             dist/blocklist-set.nft \
             dist/blocklist.txt \
             dist/blocklist.txt.gz \

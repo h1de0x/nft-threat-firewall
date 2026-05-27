@@ -300,6 +300,63 @@ sudo nft -a list table inet nft_threat_firewall
 
 Use `dist/blocklist.nft` for normal quiet operation and `dist/blocklist-log.nft` for diagnostics.
 
+
+### Log analysis helper script
+
+This repository also includes a small helper script for analyzing logs produced by `dist/blocklist-log.nft`.
+
+Copy it to the server or run it from a cloned checkout:
+
+```bash
+sudo scripts/analyze-logs.sh
+```
+
+Default time range is `24 hours ago`.
+
+Custom time ranges:
+
+```bash
+sudo scripts/analyze-logs.sh "1 hour ago"
+sudo scripts/analyze-logs.sh "10 minutes ago"
+sudo scripts/analyze-logs.sh "2026-05-27 17:00:00"
+```
+
+The script prints:
+
+- top blocked hosts;
+- top blocked direction/IP/port combinations;
+- top blocked `/24` networks.
+
+Output format for direction/IP/port:
+
+```text
+COUNT DIRECTION IP PORT
+```
+
+Example:
+
+```text
+6 FWD-SRC 188.241.177.228 46580
+3 IN 95.221.202.168 32600
+1 IN 91.92.42.88 22
+```
+
+Direction meanings:
+
+| Direction | Meaning |
+|---|---|
+| `IN` | blocked incoming traffic to the host |
+| `FWD-SRC` | blocked forwarded traffic from a blocked source IP |
+| `FWD-DST` | blocked forwarded traffic to a blocked destination IP |
+| `OUT` | blocked outgoing traffic to a blocked destination IP |
+
+For `IN` and `FWD-SRC`, the blocked IP is taken from `SRC`.
+
+For `OUT` and `FWD-DST`, the blocked IP is taken from `DST`.
+
+Forwarded traffic is common when the server runs Docker, WireGuard, VPNs, NAT, or port forwarding.
+
+
 ## `blocklist-set.nft`
 
 `dist/blocklist-set.nft` contains only the nftables set.

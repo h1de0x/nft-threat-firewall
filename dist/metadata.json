@@ -1,10 +1,10 @@
 {
   "project": "https://github.com/h1de0x/nft-threat-firewall",
-  "generated_at": "2026-05-27T18:30:41+00:00",
+  "generated_at": "2026-05-27T18:50:16+00:00",
   "table_name": "nft_threat_firewall",
   "set_name": "blocked_ipv4",
-  "total_raw_ranges": 97341,
-  "total_merged_ranges": 52566,
+  "total_raw_ranges": 97325,
+  "total_merged_ranges": 52572,
   "sources": [
     {
       "name": "spamhaus_drop",
@@ -21,8 +21,8 @@
     {
       "name": "blocklist_de",
       "url": "https://lists.blocklist.de/lists/all.txt",
-      "raw_ranges": 22376,
-      "merged_ranges": 13696
+      "raw_ranges": 22379,
+      "merged_ranges": 13694
     },
     {
       "name": "ciarmy",
@@ -57,8 +57,8 @@
     {
       "name": "greensnow",
       "url": "https://blocklist.greensnow.co/greensnow.txt",
-      "raw_ranges": 5483,
-      "merged_ranges": 5202
+      "raw_ranges": 5464,
+      "merged_ranges": 5182
     },
     {
       "name": "maltrail_scanners",

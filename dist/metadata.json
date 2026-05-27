@@ -1,0 +1,83 @@
+{
+  "project": "https://github.com/h1de0x/nft-threat-firewall",
+  "generated_at": "2026-05-27T15:36:35+00:00",
+  "table_name": "nft_threat_firewall",
+  "set_name": "blocked_ipv4",
+  "total_raw_ranges": 97646,
+  "total_merged_ranges": 52611,
+  "sources": [
+    {
+      "name": "spamhaus_drop",
+      "url": "https://www.spamhaus.org/drop/drop.txt",
+      "raw_ranges": 1609,
+      "merged_ranges": 1357
+    },
+    {
+      "name": "dshield",
+      "url": "https://feeds.dshield.org/block.txt",
+      "raw_ranges": 40,
+      "merged_ranges": 40
+    },
+    {
+      "name": "blocklist_de",
+      "url": "https://lists.blocklist.de/lists/all.txt",
+      "raw_ranges": 22571,
+      "merged_ranges": 13814
+    },
+    {
+      "name": "ciarmy",
+      "url": "https://cinsscore.com/list/ci-badguys.txt",
+      "raw_ranges": 15000,
+      "merged_ranges": 12785
+    },
+    {
+      "name": "bruteforceblocker",
+      "url": "https://iplists.firehol.org/files/bruteforceblocker.ipset",
+      "raw_ranges": 539,
+      "merged_ranges": 538
+    },
+    {
+      "name": "cruzit_web_attacks",
+      "url": "https://iplists.firehol.org/files/cruzit_web_attacks.ipset",
+      "raw_ranges": 13878,
+      "merged_ranges": 13380
+    },
+    {
+      "name": "et_compromised",
+      "url": "https://rules.emergingthreats.net/blockrules/compromised-ips.txt",
+      "raw_ranges": 535,
+      "merged_ranges": 535
+    },
+    {
+      "name": "bds_atif",
+      "url": "https://www.binarydefense.com/banlist.txt",
+      "raw_ranges": 1488,
+      "merged_ranges": 1274
+    },
+    {
+      "name": "greensnow",
+      "url": "https://blocklist.greensnow.co/greensnow.txt",
+      "raw_ranges": 5592,
+      "merged_ranges": 5316
+    },
+    {
+      "name": "maltrail_scanners",
+      "url": "https://iplists.firehol.org/files/maltrail_scanners.ipset",
+      "raw_ranges": 16854,
+      "merged_ranges": 6625
+    },
+    {
+      "name": "ipsum_3",
+      "url": "https://raw.githubusercontent.com/stamparm/ipsum/master/levels/3.txt",
+      "raw_ranges": 19540,
+      "merged_ranges": 14535
+    }
+  ],
+  "failed_sources": [],
+  "outputs": {
+    "nft_firewall": "dist/blocklist.nft",
+    "nft_set_only": "dist/blocklist-set.nft",
+    "plain_ranges": "dist/blocklist.txt",
+    "plain_ranges_gzip": "dist/blocklist.txt.gz"
+  }
+}

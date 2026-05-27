@@ -1,0 +1,53 @@
+name: Generate nft threat firewall
+
+on:
+  schedule:
+    - cron: "23 */12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Generate blocklist
+        run: python generate_blocklist.py
+
+      - name: Install nftables
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nftables
+
+      - name: Validate nftables syntax
+        run: |
+          sudo nft -c -f dist/blocklist.nft
+          sudo nft -c -f dist/blocklist-set.nft
+
+      - name: Commit updated blocklist
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            dist/blocklist.nft \
+            dist/blocklist-set.nft \
+            dist/blocklist.txt \
+            dist/blocklist.txt.gz \
+            dist/metadata.json
+
+          git diff --cached --quiet || git commit -m "Update nft threat blocklist"
+          git push

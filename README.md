@@ -174,11 +174,24 @@ Follow logs live:
 sudo journalctl -kf | grep --line-buffered nft-threat
 ```
 
-Show top blocked source IPs from the last hour:
+### Log analysis
+
+The log prefixes have different meanings:
+
+| Prefix | Meaning | Blocked address field |
+|---|---|---|
+| `nft-threat IN` | Incoming packets from blocked IPs | `SRC` |
+| `nft-threat FWD-SRC` | Forwarded packets from blocked IPs | `SRC` |
+| `nft-threat FWD-DST` | Forwarded packets to blocked IPs | `DST` |
+| `nft-threat OUT` | Outgoing packets to blocked IPs | `DST` |
+
+Do not mix all `SRC=` values from all `nft-threat` logs together. For `OUT` and `FWD-DST`, the blocked IP is in `DST`, not `SRC`.
+
+Show top blocked incoming source IPs:
 
 ```bash
 sudo journalctl -k --since "1 hour ago" \
-  | grep nft-threat \
+  | grep 'nft-threat IN ' \
   | sed -n 's/.*SRC=\([0-9.]*\).*/\1/p' \
   | sort \
   | uniq -c \
@@ -186,16 +199,103 @@ sudo journalctl -k --since "1 hour ago" \
   | head -20
 ```
 
-Show top destination ports from the last hour:
+Show top blocked incoming source IPs with destination ports:
 
 ```bash
 sudo journalctl -k --since "1 hour ago" \
-  | grep nft-threat \
+  | grep 'nft-threat IN ' \
+  | sed -n 's/.*SRC=\([0-9.]*\).*DPT=\([0-9]*\).*/\1 \2/p' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -30
+```
+
+Show top destination ports for blocked incoming packets:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep 'nft-threat IN ' \
   | grep -o 'DPT=[0-9]*' \
   | sort \
   | uniq -c \
   | sort -nr \
   | head -20
+```
+
+Show top blocked forwarded source IPs:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep 'nft-threat FWD-SRC ' \
+  | sed -n 's/.*SRC=\([0-9.]*\).*/\1/p' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -20
+```
+
+Show top blocked forwarded destination IPs:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep 'nft-threat FWD-DST ' \
+  | sed -n 's/.*DST=\([0-9.]*\).*/\1/p' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -20
+```
+
+Show top blocked outgoing destination IPs:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep 'nft-threat OUT ' \
+  | sed -n 's/.*DST=\([0-9.]*\).*/\1/p' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -20
+```
+
+Check logs for a specific IP:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep nft-threat \
+  | grep '95.221.202.168'
+```
+
+Show only new events from the current moment:
+
+```bash
+SINCE="$(date '+%Y-%m-%d %H:%M:%S')"
+echo "$SINCE"
+
+sudo journalctl -k --since "$SINCE" | grep nft-threat
+```
+
+### Counters
+
+The logging rules are rate-limited, so logs do not show every dropped packet.
+
+For total packet and byte counters, use:
+
+```bash
+sudo nft list table inet nft_threat_firewall
+```
+
+Reset counters:
+
+```bash
+sudo nft reset counters table inet nft_threat_firewall
+```
+
+Show rule handles:
+
+```bash
+sudo nft -a list table inet nft_threat_firewall
 ```
 
 Use `dist/blocklist.nft` for normal quiet operation and `dist/blocklist-log.nft` for diagnostics.

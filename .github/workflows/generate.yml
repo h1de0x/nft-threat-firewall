@@ -35,6 +35,7 @@ jobs:
       - name: Validate nftables syntax
         run: |
           sudo nft -c -f dist/blocklist.nft
+          sudo nft -c -f dist/blocklist-log.nft
           sudo nft -c -f dist/blocklist-set.nft
 
       - name: Commit updated blocklist

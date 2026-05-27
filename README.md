@@ -470,3 +470,88 @@ See [`LICENSE`](LICENSE).
 Generated blocklist files are compiled from third-party public threat intelligence feeds. Rights, licenses, and usage restrictions for upstream feed data remain with their respective maintainers.
 
 Use this project at your own risk.
+
+## Logging firewall
+
+`dist/blocklist-log.nft` is a diagnostic version of the full firewall file.
+
+It contains the same nftables set and DROP rules as `dist/blocklist.nft`, but also adds rate-limited kernel logging before each DROP rule.
+
+Raw URL:
+
+```text
+https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft
+```
+
+Use this version when you want to see which blocked IPs are hitting your server.
+
+Download:
+
+```bash
+curl -fsSL \
+  https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft \
+  -o /tmp/blocklist-log.nft
+```
+
+Validate:
+
+```bash
+sudo nft -c -f /tmp/blocklist-log.nft
+```
+
+Apply:
+
+```bash
+sudo nft delete table inet nft_threat_firewall 2>/dev/null || true
+sudo nft -f /tmp/blocklist-log.nft
+```
+
+View logs:
+
+```bash
+sudo journalctl -k --since "10 minutes ago" | grep nft-threat
+```
+
+Follow logs live:
+
+```bash
+sudo journalctl -kf | grep --line-buffered nft-threat
+```
+
+Show top blocked source IPs from the last hour:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep nft-threat \
+  | sed -n 's/.*SRC=\([0-9.]*\).*/\1/p' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -20
+```
+
+Show top destination ports from the last hour:
+
+```bash
+sudo journalctl -k --since "1 hour ago" \
+  | grep nft-threat \
+  | grep -o 'DPT=[0-9]*' \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | head -20
+```
+
+### Important
+
+The logging rules use rate-limited kernel logging:
+
+```nft
+limit rate 10/minute log prefix "nft-threat IN " flags all
+```
+
+Logging is rate-limited to avoid flooding the kernel log.
+
+The DROP rule is separate and comes after the logging rule, so packets are still dropped even when logging is rate-limited.
+
+Use `dist/blocklist.nft` for normal quiet operation and `dist/blocklist-log.nft` for diagnostics.

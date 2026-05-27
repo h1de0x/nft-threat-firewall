@@ -175,7 +175,7 @@ sudo nft list table inet nft_threat_firewall
 Check counters:
 
 ```bash
-sudo nft list table inet nft_threat_firewall -a
+sudo nft -a list table inet nft_threat_firewall
 ```
 
 Remove the generated firewall table:

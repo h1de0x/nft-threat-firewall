@@ -31,6 +31,7 @@ METADATA_OUTPUT_PATH = DIST_DIR / "metadata.json"
 
 TABLE_NAME = "nft_threat_firewall"
 SET_NAME = "blocked_ipv4"
+PRIVATE_IPV4_RANGES = "{ 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 }"
 
 USER_AGENT = (
     "nft-threat-firewall/1.0 "
@@ -282,18 +283,18 @@ def write_nft_firewall(path: Path, ranges: list[Range], generated_at: str) -> No
         file.write("\n")
         file.write("    chain input {\n")
         file.write("        type filter hook input priority 0; policy accept;\n")
-        file.write(f"        ip saddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip saddr != {PRIVATE_IPV4_RANGES} ip saddr @{SET_NAME} counter drop\n")
         file.write("    }\n")
         file.write("\n")
         file.write("    chain forward {\n")
         file.write("        type filter hook forward priority 0; policy accept;\n")
-        file.write(f"        ip saddr @{SET_NAME} counter drop\n")
-        file.write(f"        ip daddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip saddr != {PRIVATE_IPV4_RANGES} ip saddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip daddr != {PRIVATE_IPV4_RANGES} ip daddr @{SET_NAME} counter drop\n")
         file.write("    }\n")
         file.write("\n")
         file.write("    chain output {\n")
         file.write("        type filter hook output priority 0; policy accept;\n")
-        file.write(f"        ip daddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip daddr != {PRIVATE_IPV4_RANGES} ip daddr @{SET_NAME} counter drop\n")
         file.write("    }\n")
         file.write("}\n")
 
@@ -321,22 +322,22 @@ def write_nft_firewall_with_logging(path: Path, ranges: list[Range], generated_a
         file.write("\n")
         file.write("    chain input {\n")
         file.write("        type filter hook input priority 0; policy accept;\n")
-        file.write(f"        ip saddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat IN \" flags all\n")
-        file.write(f"        ip saddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip saddr != {PRIVATE_IPV4_RANGES} ip saddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat IN \" flags all\n")
+        file.write(f"        ip saddr != {PRIVATE_IPV4_RANGES} ip saddr @{SET_NAME} counter drop\n")
         file.write("    }\n")
         file.write("\n")
         file.write("    chain forward {\n")
         file.write("        type filter hook forward priority 0; policy accept;\n")
-        file.write(f"        ip saddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat FWD-SRC \" flags all\n")
-        file.write(f"        ip saddr @{SET_NAME} counter drop\n")
-        file.write(f"        ip daddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat FWD-DST \" flags all\n")
-        file.write(f"        ip daddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip saddr != {PRIVATE_IPV4_RANGES} ip saddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat FWD-SRC \" flags all\n")
+        file.write(f"        ip saddr != {PRIVATE_IPV4_RANGES} ip saddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip daddr != {PRIVATE_IPV4_RANGES} ip daddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat FWD-DST \" flags all\n")
+        file.write(f"        ip daddr != {PRIVATE_IPV4_RANGES} ip daddr @{SET_NAME} counter drop\n")
         file.write("    }\n")
         file.write("\n")
         file.write("    chain output {\n")
         file.write("        type filter hook output priority 0; policy accept;\n")
-        file.write(f"        ip daddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat OUT \" flags all\n")
-        file.write(f"        ip daddr @{SET_NAME} counter drop\n")
+        file.write(f"        ip daddr != {PRIVATE_IPV4_RANGES} ip daddr @{SET_NAME} limit rate 10/minute log prefix \"nft-threat OUT \" flags all\n")
+        file.write(f"        ip daddr != {PRIVATE_IPV4_RANGES} ip daddr @{SET_NAME} counter drop\n")
         file.write("    }\n")
         file.write("}\n")
 

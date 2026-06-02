@@ -478,7 +478,7 @@ sudo nft -c -f your-rules.nft
 
 ## Automatic update script
 
-Example update script:
+Example update script with atomic table replacement:
 
 ```bash
 sudo tee /usr/local/sbin/update-nft-threat-firewall >/dev/null <<'SCRIPT'
@@ -486,20 +486,36 @@ sudo tee /usr/local/sbin/update-nft-threat-firewall >/dev/null <<'SCRIPT'
 set -eu
 
 URL="https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist.nft"
+TABLE_NAME="nft_threat_firewall"
+
 TMP_FILE="$(mktemp)"
+BATCH_FILE="$(mktemp)"
 
 cleanup() {
-    rm -f "$TMP_FILE"
+    rm -f "$TMP_FILE" "$BATCH_FILE"
 }
-
 trap cleanup EXIT
 
 curl -fsSL "$URL" -o "$TMP_FILE"
 
-nft -c -f "$TMP_FILE"
+# Use batch mode to atomically replace the table
+# This prevents race conditions where packets slip through during table reload
+if nft list table inet "$TABLE_NAME" >/dev/null 2>&1; then
+    cat > "$BATCH_FILE" <<EOF
+delete table inet $TABLE_NAME
+include "$TMP_FILE"
+EOF
+else
+    cat > "$BATCH_FILE" <<EOF
+include "$TMP_FILE"
+EOF
+fi
 
-nft delete table inet nft_threat_firewall 2>/dev/null || true
-nft -f "$TMP_FILE"
+# Validate syntax before applying
+nft -c -f "$BATCH_FILE"
+
+# Apply atomically
+nft -f "$BATCH_FILE"
 SCRIPT
 ```
 
@@ -520,6 +536,10 @@ To use the logging firewall instead, change the URL in the script to:
 ```text
 https://raw.githubusercontent.com/h1de0x/nft-threat-firewall/main/dist/blocklist-log.nft
 ```
+
+### Why batch mode?
+
+Previous non-atomic approaches had a race condition: when deleting and recreating the table in separate commands, packets arriving between the delete and create operations could be mishandled. The batch mode (`include` directive) ensures the delete and create operations are atomic within the kernel, preventing any dropped packets during updates.
 
 ## Cron example
 

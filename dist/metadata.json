@@ -1,10 +1,10 @@
 {
   "project": "https://github.com/h1de0x/nft-threat-firewall",
-  "generated_at": "2026-06-16T17:26:19+00:00",
+  "generated_at": "2026-06-16T21:22:32+00:00",
   "table_name": "nft_threat_firewall",
   "set_name": "blocked_ipv4",
-  "total_raw_ranges": 102687,
-  "total_merged_ranges": 55969,
+  "total_raw_ranges": 102566,
+  "total_merged_ranges": 56134,
   "sources": [
     {
       "name": "dshield",
@@ -15,20 +15,20 @@
     {
       "name": "blocklist_de",
       "url": "https://lists.blocklist.de/lists/all.txt",
-      "raw_ranges": 27053,
-      "merged_ranges": 15680
+      "raw_ranges": 26953,
+      "merged_ranges": 15657
     },
     {
       "name": "ciarmy",
       "url": "https://cinsscore.com/list/ci-badguys.txt",
       "raw_ranges": 15000,
-      "merged_ranges": 12946
+      "merged_ranges": 13067
     },
     {
       "name": "bruteforceblocker",
       "url": "https://iplists.firehol.org/files/bruteforceblocker.ipset",
-      "raw_ranges": 603,
-      "merged_ranges": 602
+      "raw_ranges": 605,
+      "merged_ranges": 604
     },
     {
       "name": "cruzit_web_attacks",
@@ -51,8 +51,8 @@
     {
       "name": "greensnow",
       "url": "https://blocklist.greensnow.co/greensnow.txt",
-      "raw_ranges": 5119,
-      "merged_ranges": 4931
+      "raw_ranges": 5096,
+      "merged_ranges": 4919
     },
     {
       "name": "maltrail_scanners",

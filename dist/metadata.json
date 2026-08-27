@@ -1,10 +1,10 @@
 {
   "project": "https://github.com/h1de0x/nft-threat-firewall",
-  "generated_at": "2026-08-26T20:13:42+00:00",
+  "generated_at": "2026-08-27T09:59:45+00:00",
   "table_name": "nft_threat_firewall",
   "set_name": "blocked_ipv4",
-  "total_raw_ranges": 87356,
-  "total_merged_ranges": 52182,
+  "total_raw_ranges": 87442,
+  "total_merged_ranges": 51697,
   "sources": [
     {
       "name": "dshield",
@@ -15,20 +15,20 @@
     {
       "name": "blocklist_de",
       "url": "https://lists.blocklist.de/lists/all.txt",
-      "raw_ranges": 24093,
-      "merged_ranges": 15317
+      "raw_ranges": 23762,
+      "merged_ranges": 15054
     },
     {
       "name": "ciarmy",
       "url": "https://cinsscore.com/list/ci-badguys.txt",
       "raw_ranges": 15000,
-      "merged_ranges": 13020
+      "merged_ranges": 12327
     },
     {
       "name": "bruteforceblocker",
       "url": "https://iplists.firehol.org/files/bruteforceblocker.ipset",
-      "raw_ranges": 542,
-      "merged_ranges": 540
+      "raw_ranges": 538,
+      "merged_ranges": 536
     },
     {
       "name": "cruzit_web_attacks",
@@ -39,20 +39,20 @@
     {
       "name": "et_compromised",
       "url": "https://rules.emergingthreats.net/blockrules/compromised-ips.txt",
-      "raw_ranges": 546,
-      "merged_ranges": 544
+      "raw_ranges": 542,
+      "merged_ranges": 540
     },
     {
       "name": "bds_atif",
       "url": "https://www.binarydefense.com/banlist.txt",
-      "raw_ranges": 497,
-      "merged_ranges": 447
+      "raw_ranges": 439,
+      "merged_ranges": 418
     },
     {
       "name": "greensnow",
       "url": "https://blocklist.greensnow.co/greensnow.txt",
-      "raw_ranges": 3188,
-      "merged_ranges": 2911
+      "raw_ranges": 3704,
+      "merged_ranges": 3358
     },
     {
       "name": "maltrail_scanners",
@@ -63,8 +63,8 @@
     {
       "name": "ipsum_3",
       "url": "https://raw.githubusercontent.com/stamparm/ipsum/master/levels/3.txt",
-      "raw_ranges": 12718,
-      "merged_ranges": 9947
+      "raw_ranges": 12685,
+      "merged_ranges": 10000
     }
   ],
   "failed_sources": [],

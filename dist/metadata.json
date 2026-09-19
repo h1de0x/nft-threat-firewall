@@ -1,10 +1,10 @@
 {
   "project": "https://github.com/h1de0x/nft-threat-firewall",
-  "generated_at": "2026-09-18T20:59:46+00:00",
+  "generated_at": "2026-09-19T04:45:23+00:00",
   "table_name": "nft_threat_firewall",
   "set_name": "blocked_ipv4",
-  "total_raw_ranges": 101715,
-  "total_merged_ranges": 53629,
+  "total_raw_ranges": 105994,
+  "total_merged_ranges": 52758,
   "sources": [
     {
       "name": "dshield",
@@ -15,14 +15,14 @@
     {
       "name": "blocklist_de",
       "url": "https://lists.blocklist.de/lists/all.txt",
-      "raw_ranges": 27451,
-      "merged_ranges": 16434
+      "raw_ranges": 27645,
+      "merged_ranges": 16243
     },
     {
       "name": "ciarmy",
       "url": "https://cinsscore.com/list/ci-badguys.txt",
       "raw_ranges": 15000,
-      "merged_ranges": 11397
+      "merged_ranges": 10455
     },
     {
       "name": "bruteforceblocker",
@@ -45,14 +45,14 @@
     {
       "name": "bds_atif",
       "url": "https://www.binarydefense.com/banlist.txt",
-      "raw_ranges": 4597,
-      "merged_ranges": 3735
+      "raw_ranges": 4794,
+      "merged_ranges": 3889
     },
     {
       "name": "greensnow",
       "url": "https://blocklist.greensnow.co/greensnow.txt",
-      "raw_ranges": 4779,
-      "merged_ranges": 4634
+      "raw_ranges": 5735,
+      "merged_ranges": 5482
     },
     {
       "name": "maltrail_scanners",
@@ -63,8 +63,8 @@
     {
       "name": "ipsum_3",
       "url": "https://raw.githubusercontent.com/stamparm/ipsum/master/levels/3.txt",
-      "raw_ranges": 17745,
-      "merged_ranges": 11676
+      "raw_ranges": 20677,
+      "merged_ranges": 14283
     }
   ],
   "failed_sources": [],

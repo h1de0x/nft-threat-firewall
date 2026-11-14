@@ -1,34 +1,34 @@
 {
   "project": "https://github.com/h1de0x/nft-threat-firewall",
-  "generated_at": "2026-11-13T19:52:30+00:00",
+  "generated_at": "2026-11-14T06:44:04+00:00",
   "table_name": "nft_threat_firewall",
   "set_name": "blocked_ipv4",
-  "total_raw_ranges": 68465,
-  "total_merged_ranges": 40882,
+  "total_raw_ranges": 92343,
+  "total_merged_ranges": 49005,
   "sources": [
     {
       "name": "dshield",
       "url": "https://feeds.dshield.org/block.txt",
       "raw_ranges": 40,
-      "merged_ranges": 39
+      "merged_ranges": 40
     },
     {
       "name": "blocklist_de",
       "url": "https://lists.blocklist.de/lists/all.txt",
-      "raw_ranges": 0,
-      "merged_ranges": 0
+      "raw_ranges": 23497,
+      "merged_ranges": 14151
     },
     {
       "name": "ciarmy",
       "url": "https://cinsscore.com/list/ci-badguys.txt",
       "raw_ranges": 15000,
-      "merged_ranges": 12179
+      "merged_ranges": 11915
     },
     {
       "name": "bruteforceblocker",
       "url": "https://iplists.firehol.org/files/bruteforceblocker.ipset",
-      "raw_ranges": 586,
-      "merged_ranges": 572
+      "raw_ranges": 583,
+      "merged_ranges": 569
     },
     {
       "name": "cruzit_web_attacks",
@@ -39,20 +39,20 @@
     {
       "name": "et_compromised",
       "url": "https://rules.emergingthreats.net/blockrules/compromised-ips.txt",
-      "raw_ranges": 566,
-      "merged_ranges": 552
+      "raw_ranges": 584,
+      "merged_ranges": 570
     },
     {
       "name": "bds_atif",
       "url": "https://www.binarydefense.com/banlist.txt",
-      "raw_ranges": 343,
-      "merged_ranges": 336
+      "raw_ranges": 324,
+      "merged_ranges": 317
     },
     {
       "name": "greensnow",
       "url": "https://blocklist.greensnow.co/greensnow.txt",
-      "raw_ranges": 2558,
-      "merged_ranges": 2336
+      "raw_ranges": 3246,
+      "merged_ranges": 2861
     },
     {
       "name": "maltrail_scanners",
@@ -63,8 +63,8 @@
     {
       "name": "ipsum_3",
       "url": "https://raw.githubusercontent.com/stamparm/ipsum/master/levels/3.txt",
-      "raw_ranges": 18640,
-      "merged_ranges": 11834
+      "raw_ranges": 18337,
+      "merged_ranges": 12148
     }
   ],
   "failed_sources": [],
